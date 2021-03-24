@@ -35,7 +35,12 @@ static void activate(GtkApplication *app, gpointer data)
 	GtkWidget *window, *box, *label, *entry, *button;
 
 	window = gtk_application_window_new(app);
+	gtk_window_set_default_size(GTK_WINDOW(window), 320, 240);
+	gtk_window_set_gravity(GTK_WINDOW(window), GDK_GRAVITY_CENTER);
+
 	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+	gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
+	gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
 
 	label = gtk_label_new("Who should we cancel today?");
 	gtk_container_add(GTK_CONTAINER(box), label);
