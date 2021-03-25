@@ -40,6 +40,7 @@ static void cancel(GtkButton *btn, gpointer data)
 static void activate(GtkApplication *app, gpointer data)
 {
 	GtkWidget *window, *box, *label, *entry, *button;
+	GtkWidget *lynch_mob;
 
 	window = gtk_application_window_new(app);
 	gtk_window_set_default_size(GTK_WINDOW(window), 320, 240);
@@ -55,6 +56,10 @@ static void activate(GtkApplication *app, gpointer data)
 	entry = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(entry), "FSF");
 	gtk_container_add(GTK_CONTAINER(box), entry);
+
+	lynch_mob = gtk_check_button_new_with_label(
+		"There is a lynch mob outside my house");
+	gtk_container_add(GTK_CONTAINER(box), lynch_mob);
 
 	button = gtk_button_new_with_label("CANCEL");
 	gtk_container_add(GTK_CONTAINER(box), button);
