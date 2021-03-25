@@ -1,5 +1,5 @@
 all:
-	gcc -o cancel $(shell pkg-config --cflags --libs gtk+-2.0) -Wall -Wextra cancel.c
+	gcc -o cancel cancel.c -Wall -Wextra $(shell pkg-config --cflags --libs gtk+-2.0)
 
 clean:
 	rm -f cancel
