@@ -1,5 +1,5 @@
 /* 
- * gcc -o cancel $(pkg-config --cflags --libs gtk+-3.0) cancel.c
+ * gcc -o cancel $(pkg-config --cflags --libs gtk+-2.0) cancel.c
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 
 #include <gtk/gtk.h>
 
-static void cancel(GtkButton *btn, gpointer data)
+static void cancel(GtkWidget *window, gpointer data)
 {
-	GtkWidget *dialog, *karen, *content_area, *label;
+	GtkWidget *dialog, *content_area, *label, *karen;
 
 	dialog = gtk_dialog_new_with_buttons("Cancelled", NULL,
-		GTK_DIALOG_MODAL, "OK", GTK_RESPONSE_ACCEPT,  NULL);
+		GTK_DIALOG_MODAL, "OK", GTK_RESPONSE_ACCEPT, NULL);
 
 	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 	label = gtk_label_new("\nSuccessfully cancelled!\n");
@@ -34,27 +34,30 @@ static void cancel(GtkButton *btn, gpointer data)
 	gtk_widget_show_all(dialog);
 
 	g_signal_connect_swapped(dialog, "response",
-		G_CALLBACK (g_application_quit), data);
+		G_CALLBACK(gtk_main_quit), window);
 }
 
-static void activate(GtkApplication *app, gpointer data)
+int main(int argc, char **argv)
 {
-	GtkWidget *window, *box, *label, *entry, *button;
-	GtkWidget *lynch_mob;
+	GtkWidget *window, *align, *box, *label, *entry, *lynch_mob, *button;
 
-	window = gtk_application_window_new(app);
+	gtk_init(&argc, &argv);
+
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(window), 320, 240);
-	gtk_window_set_gravity(GTK_WINDOW(window), GDK_GRAVITY_CENTER);
 
-	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-	gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
-	gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
+	align = gtk_alignment_new(0, 0, 1, 0);
+	gtk_alignment_set_padding(GTK_ALIGNMENT(align), 15, 15, 50, 50);
+	gtk_container_add(GTK_CONTAINER(window), align);
+
+	box = gtk_vbox_new(TRUE, 10);
+	gtk_container_add(GTK_CONTAINER(align), box);
 
 	label = gtk_label_new("Who should we cancel today?");
 	gtk_container_add(GTK_CONTAINER(box), label);
 
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), "FSF");
+	gtk_entry_set_text(GTK_ENTRY(entry), "Freedom of speech");
 	gtk_container_add(GTK_CONTAINER(box), entry);
 
 	lynch_mob = gtk_check_button_new_with_label(
@@ -63,23 +66,10 @@ static void activate(GtkApplication *app, gpointer data)
 
 	button = gtk_button_new_with_label("CANCEL");
 	gtk_container_add(GTK_CONTAINER(box), button);
-	g_signal_connect(button, "clicked", G_CALLBACK(cancel), app);
-
-	gtk_window_set_title(GTK_WINDOW(window), "Cancel");
-	gtk_container_add(GTK_CONTAINER(window), box);
+	g_signal_connect(button, "clicked", G_CALLBACK(cancel), window);
 
 	gtk_widget_show_all(window);
-}
+	gtk_main();
 
-int main(int argc, char **argv)
-{
-	GtkApplication *app;
-	int status;
-
-	app = gtk_application_new(NULL, G_APPLICATION_FLAGS_NONE);
-	g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
-	status = g_application_run(G_APPLICATION(app), argc, argv);
-	g_object_unref(app);
-
-	return status;
+	return 0;
 }
