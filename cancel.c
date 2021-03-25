@@ -26,9 +26,9 @@ static const char *karens[] = {
 	"karens/karen3.jpg",
 };
 
-static void cancel(GtkWidget *window, gpointer data)
+static void cancel()
 {
-	GtkWidget *dialog, *content_area, *label, *karen;
+	GtkWidget *dialog, *content_area, *label;
 
 	dialog = gtk_dialog_new_with_buttons("Cancelled", NULL,
 		GTK_DIALOG_MODAL, "OK", GTK_RESPONSE_ACCEPT, NULL);
@@ -37,14 +37,12 @@ static void cancel(GtkWidget *window, gpointer data)
 	label = gtk_label_new("\nSuccessfully cancelled!\n");
 	gtk_container_add(GTK_CONTAINER(content_area), label);
 
-	karen = gtk_image_new_from_file(karens[g_rand_int_range(g_rand_new(),
-		0, nelem(karens))]);
-	gtk_container_add(GTK_CONTAINER(content_area), karen);
+	gtk_container_add(GTK_CONTAINER(content_area), gtk_image_new_from_file(
+		karens[g_rand_int_range(g_rand_new(), 0, nelem(karens))]));
+
+	g_signal_connect(dialog, "response", G_CALLBACK(gtk_main_quit), NULL);
 
 	gtk_widget_show_all(dialog);
-
-	g_signal_connect_swapped(dialog, "response",
-		G_CALLBACK(gtk_main_quit), window);
 }
 
 int main(int argc, char **argv)
@@ -55,6 +53,10 @@ int main(int argc, char **argv)
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(window), 320, 240);
+	gtk_window_set_title(GTK_WINDOW(window), "Cancel Tool");
+
+	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	align = gtk_alignment_new(0, 0, 1, 0);
 	gtk_alignment_set_padding(GTK_ALIGNMENT(align), 15, 15, 50, 50);
