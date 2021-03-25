@@ -19,15 +19,22 @@
 
 static void cancel(GtkButton *btn, gpointer data)
 {
-	GtkWidget *dialog;
+	GtkWidget *dialog, *karen, *content_area, *label;
 
-	dialog = gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_INFO,
-		GTK_BUTTONS_OK, "Successfully cancelled!");
+	dialog = gtk_dialog_new_with_buttons("Cancelled", NULL,
+		GTK_DIALOG_MODAL, "OK", GTK_RESPONSE_ACCEPT,  NULL);
 
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
+	content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	label = gtk_label_new("\nSuccessfully cancelled!\n");
+	gtk_container_add(GTK_CONTAINER(content_area), label);
 
-	g_application_quit(G_APPLICATION(data));
+	karen = gtk_image_new_from_file("karen.png");
+	gtk_container_add(GTK_CONTAINER(content_area), karen);
+
+	gtk_widget_show_all(dialog);
+
+	g_signal_connect_swapped(dialog, "response",
+		G_CALLBACK (g_application_quit), data);
 }
 
 static void activate(GtkApplication *app, gpointer data)
