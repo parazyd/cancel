@@ -17,6 +17,15 @@
 
 #include <gtk/gtk.h>
 
+#define nelem(x) (sizeof (x) / sizeof *(x))
+
+static const char *karens[] = {
+	"karens/karen0.jpg",
+	"karens/karen1.jpg",
+	"karens/karen2.jpg",
+	"karens/karen3.jpg",
+};
+
 static void cancel(GtkWidget *window, gpointer data)
 {
 	GtkWidget *dialog, *content_area, *label, *karen;
@@ -28,7 +37,8 @@ static void cancel(GtkWidget *window, gpointer data)
 	label = gtk_label_new("\nSuccessfully cancelled!\n");
 	gtk_container_add(GTK_CONTAINER(content_area), label);
 
-	karen = gtk_image_new_from_file("karen.png");
+	karen = gtk_image_new_from_file(karens[g_rand_int_range(g_rand_new(),
+		0, nelem(karens))]);
 	gtk_container_add(GTK_CONTAINER(content_area), karen);
 
 	gtk_widget_show_all(dialog);
