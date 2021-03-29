@@ -30,15 +30,15 @@ static const char *karens[] = {
 
 static void lynch(int unused, GtkWidget *entry)
 {
-	char req[128];
+	int fd;
+	char req[64];
 	struct hostent *he;
 	struct sockaddr_in addr;
-	int sockfd;
 
 	if ((he = gethostbyname("bitreich.org")) == NULL)
 		return;
 
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 		return;
 
 	addr.sin_family = AF_INET;
@@ -49,15 +49,13 @@ static void lynch(int unused, GtkWidget *entry)
 	snprintf(req, sizeof(req), "/cancel\t%s\r\n",
 		gtk_entry_get_text(GTK_ENTRY(entry)));
 
-	if (connect(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr)) == -1)
+	if (connect(fd, (struct sockaddr *)&addr, sizeof(struct sockaddr)) < 0)
 		goto out;
 
-	if (send(sockfd, req, strlen(req), 0) == -1)
-		goto out;
+	send(fd, req, strlen(req), 0);
 
 out:
-	close(sockfd);
-
+	close(fd);
 	(void)unused;
 }
 
