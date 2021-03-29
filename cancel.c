@@ -46,7 +46,8 @@ static void lynch(int unused, GtkWidget *entry)
 	addr.sin_addr = *((struct in_addr *)he->h_addr);
 	memset(&(addr.sin_zero), 0, 8);
 
-	sprintf(req, "/cancel\t%s\r\n", gtk_entry_get_text(GTK_ENTRY(entry)));
+	snprintf(req, sizeof(req), "/cancel\t%s\r\n",
+		gtk_entry_get_text(GTK_ENTRY(entry)));
 
 	if (connect(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr)) == -1)
 		goto out;
