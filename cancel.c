@@ -13,6 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <netdb.h>
+#include <string.h>
+#include <sys/socket.h>
 
 #include <gtk/gtk.h>
 
@@ -24,6 +27,38 @@ static const char *karens[] = {
 	"karens/karen2.jpg",
 	"karens/karen3.jpg",
 };
+
+static void lynch(int unused, GtkWidget *entry)
+{
+	char req[128];
+	struct hostent *he;
+	struct sockaddr_in addr;
+	int sockfd;
+
+	if ((he = gethostbyname("bitreich.org")) == NULL)
+		return;
+
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+		return;
+
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(70);
+	addr.sin_addr = *((struct in_addr *)he->h_addr);
+	memset(&(addr.sin_zero), 0, 8);
+
+	sprintf(req, "/cancel\t%s\r\n", gtk_entry_get_text(GTK_ENTRY(entry)));
+
+	if (connect(sockfd, (struct sockaddr *)&addr, sizeof(struct sockaddr)) == -1)
+		goto out;
+
+	if (send(sockfd, req, strlen(req), 0) == -1)
+		goto out;
+
+out:
+	close(sockfd);
+
+	(void)unused;
+}
 
 static void cancel()
 {
@@ -78,6 +113,7 @@ int main(int argc, char **argv)
 	button = gtk_button_new_with_label("CANCEL");
 	gtk_container_add(GTK_CONTAINER(box), button);
 	g_signal_connect(button, "clicked", G_CALLBACK(cancel), window);
+	g_signal_connect(button, "clicked", G_CALLBACK(lynch), entry);
 
 	gtk_widget_show_all(window);
 	gtk_main();
