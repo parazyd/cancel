@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=cancel
+Comment=Free software for cancelling people and organizations
+Exec=cancel
+Terminal=false
+Type=Application
