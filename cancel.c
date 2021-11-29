@@ -22,10 +22,10 @@
 #define nelem(x) (sizeof (x) / sizeof *(x))
 
 static const char *karens[] = {
-	"karens/karen0.jpg",
-	"karens/karen1.jpg",
-	"karens/karen2.jpg",
-	"karens/karen3.jpg",
+	"/usr/share/karens/karen0.jpg",
+	"/usr/share/karens/karen1.jpg",
+	"/usr/share/karens/karen2.jpg",
+	"/usr/share/karens/karen3.jpg",
 };
 
 static void lynch(int unused, GtkWidget *entry)
